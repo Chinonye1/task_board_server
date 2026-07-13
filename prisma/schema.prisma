@@ -1,14 +1,14 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Project {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(uuid())
   name        String
   description String?
   createdAt   DateTime @default(now())
@@ -16,13 +16,12 @@ model Project {
 }
 
 model Task {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(uuid())
   title       String
   description String?
   status      String    @default("todo") // todo | in_progress | done
   dueDate     DateTime?
   project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId   Int
+  projectId   String
   createdAt   DateTime  @default(now())
 }
-

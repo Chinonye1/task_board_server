@@ -22,7 +22,7 @@ router.get("/", async (request, response) => {
 //Create task
 
 router.post("/", async (request, response) => {
-  const { title, description, status, dueDate, projectId } = request.body;
+  const { title, description, status, dueDate, projectId } = request.body ?? {};
 
   if (!title || !projectId) {
     return response
@@ -30,16 +30,23 @@ router.post("/", async (request, response) => {
       .json({ errorMessage: "Title and ProjectId are required" });
   }
 
-  const task = await prisma.task.create({
-    data: {
-      title,
-      description,
-      status,
-      dueDate: dueDate ? new Date(dueDate) : undefined,
-      projectId,
-    },
-  });
-  response.status(201).json(task);
+  try {
+    const task = await prisma.task.create({
+      data: {
+        title,
+        description,
+        status,
+        dueDate: dueDate ? new Date(dueDate) : undefined,
+        projectId,
+      },
+    });
+    response.status(201).json(task);
+  } catch (error: any) {
+    if (error?.code === "P2003") {
+      return response.status(400).json({ errorMessage: "Project does not exist" });
+    }
+    response.status(500).json({ errorMessage: "Something went wrong" });
+  }
 });
 
 //Get tasks by their id
@@ -58,8 +65,9 @@ router.get("/:id", async (request, response) => {
 
 router.put("/:id", async (request, response) => {
   const { id } = request.params;
-  const { title, description, status, dueDate, projectId } = request.body;
+  const { title, description, status, dueDate, projectId } = request.body ?? {};
 
+    try {
   const task = await prisma.task.update({
     where: { id },
     data: {
@@ -71,15 +79,27 @@ router.put("/:id", async (request, response) => {
     },
   });
   response.json(task);
+  } catch (error: any) {
+    if (error?.code === "P2025") {
+      return response.status(404).json({ errorMessage: "Task not found" });
+    }
+    response.status(500).json({ errorMessage: "Something went wrong" });
+  }
 });
 
 //Delete tasks by their id
 router.delete("/:id", async (request, response) => {
   const { id } = request.params;
 
-  await prisma.task.delete({ where: { id } });
-
-  return response.status(204).send();
+  try {
+    await prisma.task.delete({ where: { id } });
+    return response.status(204).send();
+  } catch (error: any) {
+    if (error?.code === "P2025") {
+      return response.status(404).json({ errorMessage: "Task not found" });
+    }
+    response.status(500).json({ errorMessage: "Something went wrong" });
+  }
 });
 
 export default router;

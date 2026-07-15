@@ -80,6 +80,9 @@ router.put("/:id", async (request, response) => {
   });
   response.json(task);
   } catch (error: any) {
+    if (error?.code === "P2003") {
+      return response.status(400).json({ errorMessage: "Project does not exist" });
+    }
     if (error?.code === "P2025") {
       return response.status(404).json({ errorMessage: "Task not found" });
     }

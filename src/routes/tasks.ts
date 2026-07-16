@@ -22,7 +22,8 @@ router.get("/", async (request, response) => {
 //Create task
 
 router.post("/", async (request, response) => {
-  const { title, description, status, dueDate, projectId } = request.body ?? {};
+  const { title, description, status, priority, dueDate, projectId } =
+    request.body ?? {};
 
   if (!title || !projectId) {
     return response
@@ -36,6 +37,7 @@ router.post("/", async (request, response) => {
         title,
         description,
         status,
+        priority,
         dueDate: dueDate ? new Date(dueDate) : undefined,
         projectId,
       },
@@ -65,7 +67,8 @@ router.get("/:id", async (request, response) => {
 
 router.put("/:id", async (request, response) => {
   const { id } = request.params;
-  const { title, description, status, dueDate, projectId } = request.body ?? {};
+  const { title, description, status, priority, dueDate, projectId } =
+    request.body ?? {};
 
     try {
   const task = await prisma.task.update({
@@ -74,6 +77,7 @@ router.put("/:id", async (request, response) => {
       title,
       description,
       status,
+      priority,
       dueDate: dueDate ? new Date(dueDate) : undefined,
       projectId,
     },

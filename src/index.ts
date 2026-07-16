@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
-import tasksRouter from "./routes/tasks";
-import projectsRouter from "./routes/projects"; 
+import tasksRouter from "./routes/tasks.js";
+import projectsRouter from "./routes/projects.js";
 
 const app = express();
 app.use(cors());

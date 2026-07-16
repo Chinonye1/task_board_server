@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { PrismaClient } from "../generated/client";
+import { PrismaClient } from "../generated/client.js";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 // Prisma 7 connects through a driver adapter.
